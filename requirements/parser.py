@@ -4,7 +4,7 @@ import warnings
 from .requirement import Requirement
 
 
-def parse(reqstr):
+def parse(reqstr, recurse=True):
     """
     Parse a requirements file into a list of Requirements
 
@@ -30,13 +30,16 @@ def parse(reqstr):
         elif not line or line.startswith('#'):
             # comments are lines that start with # only
             continue
-        elif line.startswith('-r') or line.startswith('--requirement'):
-            _, new_filename = line.split()
-            new_file_path = os.path.join(os.path.dirname(filename or '.'),
-                                         new_filename)
-            with open(new_file_path) as f:
-                for requirement in parse(f):
-                    yield requirement
+        elif Requirement.is_recursion(line):
+            req = Requirement.parse_recursion(line)
+            if recurse:
+                new_file_path = os.path.join(os.path.dirname(filename or '.'),
+                                             req.path)
+                with open(new_file_path) as f:
+                    for requirement in parse(f):
+                        yield requirement
+            else:
+                yield req
         elif line.startswith('-f') or line.startswith('--find-links') or \
                 line.startswith('-i') or line.startswith('--index-url') or \
                 line.startswith('--extra-index-url') or \

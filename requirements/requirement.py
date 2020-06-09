@@ -1,10 +1,18 @@
 from __future__ import unicode_literals
+
 import re
+
 from pkg_resources import Requirement as Req
 
-from .fragment import get_hash_info, parse_fragment, parse_extras_require
-from .vcs import VCS, VCS_SCHEMES
-
+from .fragment import (
+    get_hash_info,
+    parse_extras_require,
+    parse_fragment,
+)
+from .vcs import (
+    VCS,
+    VCS_SCHEMES,
+)
 
 URI_REGEX = re.compile(
     r'^(?P<scheme>https?|file|ftps?)://(?P<path>[^#]+)'
@@ -75,6 +83,7 @@ class Requirement(object):
         self.hash = None
         self.extras = []
         self.specs = []
+        self.recursive = False
 
     def __repr__(self):
         return '<Requirement: "{0}">'.format(self.line)
@@ -92,6 +101,7 @@ class Requirement(object):
             self.hash_name == other.hash_name,
             self.hash == other.hash,
             set(self.extras) == set(other.extras),
+            self.recursive and self.path == other.recursive and other.path
         ])
 
     def __ne__(self, other):
@@ -235,5 +245,22 @@ class Requirement(object):
             # or a VCS project URI
             return cls.parse_editable(
                 re.sub(r'^(-e|--editable=?)\s*', '', line))
+        elif cls.is_recursion(line):
+            cls.parse_recursion(line)
+        else:
+            return cls.parse_line(line)
 
-        return cls.parse_line(line)
+    recursion_flags = ('-r', '--requirement')
+
+    @classmethod
+    def is_recursion(cls, line):
+        return any(line.startswith(flag) for flag in cls.recursion_flags)
+
+    @classmethod
+    def parse_recursion(cls, line):
+        _, file_name = line.split()
+        assert _ in cls.recursion_flags
+        req = cls('-e {0}'.format(line))
+        req.recursive = True
+        req.path = file_name
+        return req
