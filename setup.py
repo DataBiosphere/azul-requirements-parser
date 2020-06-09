@@ -16,7 +16,7 @@ long_description = open('README.rst').read()
 
 setup(
     name='requirements-parser',
-    version='0.2.0',
+    version='0.2.0+1',
     description='Parses Pip requirement files',
     long_description=long_description,
     author='David Fischer',
