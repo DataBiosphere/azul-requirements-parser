@@ -39,13 +39,19 @@ _UNSUPPORTED_OPTIONS = {
 }
 
 
-def parse(reqstr: Union[str, TextIO]) -> Iterator[Requirement]:
+def parse(reqstr: Union[str, TextIO], recurse=True) -> Iterator[Requirement]:
     """
     Parse a requirements file into a list of Requirements
 
     See: pip/req.py:parse_requirements()
 
     :param reqstr: a string or file like object containing requirements
+
+    :param recurse: If True, recursively parse files referenced via -r or
+                    --recursive and yield all requirements defined in those
+                    files. Otherwise, yield just one Requirement instance that
+                    represents the reference
+
     :returns: a *generator* of Requirement objects
     """
     filename = getattr(reqstr, 'name', None)
@@ -65,13 +71,16 @@ def parse(reqstr: Union[str, TextIO]) -> Iterator[Requirement]:
         elif not line or line.startswith('--hash='):
             # hashes are lines that start with --hash=
             continue
-        elif line.startswith(('-r', '--requirement')):
-            _, new_filename = line.split()
-            new_file_path = os.path.join(os.path.dirname(filename or '.'),
-                                         new_filename)
-            with open(new_file_path) as f:
-                for requirement in parse(f):
-                    yield requirement
+        elif Requirement.is_recursion(line):
+            req = Requirement.parse_recursion(line)
+            if recurse:
+                new_file_path = os.path.join(os.path.dirname(filename or '.'),
+                                             req.path)
+                with open(new_file_path) as f:
+                    for requirement in parse(f, recurse=recurse):
+                        yield requirement
+            else:
+                yield req
         elif line.startswith('-f') or line.startswith('--find-links') or \
                 line.startswith('-i') or line.startswith('--index-url') or \
                 line.startswith('--extra-index-url') or \

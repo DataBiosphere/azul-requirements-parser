@@ -89,6 +89,7 @@ class Requirement:
         self.hash = None
         self.extras: List[str] = []
         self.specs: List[Tuple[str, str]] = []
+        self.recursive = False
 
     def __repr__(self) -> str:
         return f'<Requirement: "{self.line}">'
@@ -107,6 +108,7 @@ class Requirement:
                 self.hash_name == other.hash_name,
                 self.hash == other.hash,
                 set(self.extras) == set(other.extras),
+                self.recursive and self.path == other.recursive and other.path,
             ])
         return False
 
@@ -270,5 +272,22 @@ class Requirement:
             line = line[:line.find(' --hash=')]
         if ' \\' in line:
             line = line[:line.find(' \\')]
+        if cls.is_recursion(line):
+            return cls.parse_recursion(line)
+        else:
+            return cls.parse_line(line)
 
-        return cls.parse_line(line)
+    recursion_flags = ('-r', '--requirement')
+
+    @classmethod
+    def is_recursion(cls, line):
+        return any(line.startswith(flag) for flag in cls.recursion_flags)
+
+    @classmethod
+    def parse_recursion(cls, line):
+        _, file_name = line.split()
+        assert _ in cls.recursion_flags
+        req = cls('-e {0}'.format(line))
+        req.recursive = True
+        req.path = file_name
+        return req
