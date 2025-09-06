@@ -39,7 +39,7 @@ _UNSUPPORTED_OPTIONS = {
 }
 
 
-def parse(reqstr: Union[str, TextIO], recurse=True) -> Iterator[Requirement]:
+def parse(reqstr: Union[str, TextIO], recurse: bool=True) -> Iterator[Requirement]:
     """
     Parse a requirements file into a list of Requirements
 

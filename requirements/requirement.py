@@ -288,7 +288,7 @@ class Requirement:
     def parse_recursion(cls, line: str) -> 'Requirement':
         _, file_name = line.split()
         assert _ in cls.recursion_flags
-        req = cls('-e {0}'.format(line))
+        req = cls(f'-e {line}')
         req.recursive = True
         req.path = file_name
         return req
