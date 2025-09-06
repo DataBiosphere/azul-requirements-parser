@@ -9,6 +9,7 @@
   "extras": [],
   "vcs": null,
   "path": null,
+  "recursive": false,
   "line":  "req==1.0    # comment",
   "hash_name": null,
   "hash": null,

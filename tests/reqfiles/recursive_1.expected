@@ -9,6 +9,7 @@
     "extras": [],
     "vcs": null,
     "path": null,
+    "recursive": false,
     "line":  "ipdb",
     "hash_name": null,
     "hash": null,    "specs": [],
@@ -24,6 +25,7 @@
     "extras": [],
     "vcs": null,
     "path": null,
+    "recursive": false,
     "line":  "Jinja",
     "hash_name": null,
     "hash": null,    "specs": [],
@@ -39,6 +41,7 @@
     "extras": [],
     "vcs": null,
     "path": null,
+    "recursive": false,
     "line":  "Django==1.6",
     "hash_name": null,
     "hash": null,    "specs": [

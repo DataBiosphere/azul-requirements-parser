@@ -9,6 +9,7 @@
   "extras": [],
   "vcs": null,
   "path": null,
+  "recursive": false,
   "line":  "packaging==21.3",
   "hash_name": null,
   "hash": null,

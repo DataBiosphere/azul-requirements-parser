@@ -108,7 +108,8 @@ class Requirement:
                 self.hash_name == other.hash_name,
                 self.hash == other.hash,
                 set(self.extras) == set(other.extras),
-                self.recursive and self.path == other.recursive and other.path,
+                self.recursive == other.recursive,
+                self.path == other.path,
             ])
         return False
 

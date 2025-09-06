@@ -9,6 +9,7 @@
   "extras": ["security"],
   "vcs": "git",
   "path": null,
+  "recursive": false,
   "line":  "git+https://git.myproject.org/MyProject.git@v0.1#egg=MyProject[security]",
   "hash_name": null,
   "hash": null,

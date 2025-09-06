@@ -9,6 +9,7 @@
         "extras": [],
         "vcs": null,
         "path": null,
+        "recursive": false,
         "line":  "ipdb",
         "hash_name": null,
         "hash": null,

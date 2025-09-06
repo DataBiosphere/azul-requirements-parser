@@ -9,6 +9,7 @@
   "extras": [],
   "vcs": null,
   "path": null,
+  "recursive": false,
   "line":  "PickyThing<1.6,>1.9,!=1.9.6,<2.0a0,==2.4c1",
   "hash_name": null,
   "hash": null,
