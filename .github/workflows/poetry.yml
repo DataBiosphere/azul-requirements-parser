@@ -4,7 +4,7 @@ name: Python CI
 
 on:
   push:
-    branches: ["main"]
+    branches: ["azul"]
   pull_request:
 
 concurrency:
