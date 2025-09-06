@@ -281,11 +281,11 @@ class Requirement:
     recursion_flags = ('-r', '--requirement')
 
     @classmethod
-    def is_recursion(cls, line):
+    def is_recursion(cls, line: str) -> bool:
         return any(line.startswith(flag) for flag in cls.recursion_flags)
 
     @classmethod
-    def parse_recursion(cls, line):
+    def parse_recursion(cls, line: str) -> 'Requirement':
         _, file_name = line.split()
         assert _ in cls.recursion_flags
         req = cls('-e {0}'.format(line))
