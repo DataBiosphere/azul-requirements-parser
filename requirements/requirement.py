@@ -83,7 +83,7 @@ class Requirement:
         self.name = None
         self.subdirectory = None
         self.uri = None
-        self.path = None
+        self.path: Optional[str] = None
         self.revision = None
         self.hash_name = None
         self.hash = None
@@ -234,7 +234,7 @@ class Requirement:
                 req.name = fragment.get('egg')  # type: ignore
                 req.hash_name, req.hash = get_hash_info(fragment)  # type: ignore
                 req.subdirectory = fragment.get('subdirectory')  # type: ignore
-            req.path = groups['path']  # type: ignore
+            req.path = groups['path']
         else:
             # This is a requirement specifier.
             # Delegate to packaging.requirements and hope for the best

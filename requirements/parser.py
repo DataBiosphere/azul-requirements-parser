@@ -73,6 +73,7 @@ def parse(reqstr: Union[str, TextIO], recurse: bool=True) -> Iterator[Requiremen
             continue
         elif Requirement.is_recursion(line):
             req = Requirement.parse_recursion(line)
+            assert req.path is not None
             if recurse:
                 new_file_path = os.path.join(os.path.dirname(filename or '.'),
                                              req.path)
