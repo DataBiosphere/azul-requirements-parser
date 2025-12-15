@@ -4,7 +4,8 @@ name: Python CI
 
 on:
   push:
-    branches: ["azul"]
+    branches: [ "azul" ]
+    tags: [ "v*" ]
   pull_request:
 
 concurrency:
@@ -85,7 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        os: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
         python-version:
           - "3.13" # highest supported
           - "3.12"
@@ -127,7 +128,7 @@ jobs:
           poetry run coverage report -m
           poetry run coverage xml -o ${{ env.REPORTS_DIR }}/coverage-${{ matrix.os }}-${{ matrix.python-version }}.xml &&
           poetry run coverage html -d ${{ env.REPORTS_DIR }}
-      - name: Artifact reports
+      - name: Upload coverage reports
         if: ${{ ! cancelled() }}
         # see https://github.com/actions/upload-artifact
         uses: actions/upload-artifact@v4
@@ -135,3 +136,25 @@ jobs:
           name: ${{ env.TESTS_REPORTS_ARTIFACT }}-${{ matrix.os }}-py${{ matrix.python-version }}
           path: ${{ env.REPORTS_DIR }}
           if-no-files-found: error
+      - name: Upload wheels
+        if: ${{ ! cancelled() }}
+        # see https://github.com/actions/upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: dist/*.whl
+          if-no-files-found: error
+
+  publish:
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    needs: [ build-and-test ]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
